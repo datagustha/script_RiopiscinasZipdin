@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8" />
+  <title>Cadastro de Evento</title>
+  <style>
+    /* Seu CSS permanece igual */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f7f7;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(122, 58, 148, 0.3);
+      padding: 30px 40px 40px 40px;
+      border-top: 6px solid #7A3A94;
+    }
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      background-color: #7A3A94;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .logo {
+      max-width: 150px;
+      height: auto;
+    }
+    .empresa-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .empresa-buttons button {
+      padding: 10px 18px;
+      border: 2px solid #7A3A94;
+      border-radius: 6px;
+      background-color: #f0f0f0;
+      font-weight: bold;
+      cursor: pointer;
+      color: #7A3A94;
+    }
+    .empresa-buttons button.selected {
+      background-color: #7A3A94;
+      color: white;
+    }
+    h1 {
+      text-align: center;
+      color: #7A3A94;
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 28px;
+      letter-spacing: 1px;
+    }
+    label {
+      color: #7A3A94;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 5px;
+    }
+    label.required::after {
+      content: " *";
+      color: #d22;
+    }
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 18px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 15px;
+      font-family: inherit;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #7A3A94;
+      outline: none;
+      box-shadow: 0 0 5px #7A3A94aa;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .btn-submit {
+      background-color: #7A3A94;
+      border: none;
+      color: white;
+      padding: 12px 22px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 5px;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+    .btn-submit:hover {
+      background-color: #5e2a6a;
+    }
+    .error-message {
+      color: #d22;
+      font-size: 13px;
+      margin-top: -12px;
+      margin-bottom: 12px;
+      display: none;
+    }
+    .sucesso-msg {
+      color: #2e7d32;
+      background-color: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      padding: 12px;
+      border-radius: 5px;
+      font-weight: bold;
+      margin-top: 15px;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="empresa-buttons">
+      <button onclick="selecionarEmpresa('rio')" id="btnRio" class="selected">RioCred</button>
+      <button onclick="selecionarEmpresa('zipdin')" id="btnZipdin">ZipDin</button>
+    </div>
+
+    <div class="logo-container">
+      <img src="https://i.ibb.co/xtV8GcBV/logoriocred-removebg-preview.png" class="logo" id="empresaLogo">
+    </div>
+
+    <h1>Cadastro de Evento</h1>
+
+    <form id="formEvento" onsubmit="return enviarEvento();">
+      <input type="hidden" id="empresa" name="empresa" value="rio">
+
+      <label for="operador" class="required">Operador</label>
+        <input type="text" id="operador" name="operador" required list="listaOperadores" placeholder="Selecione ou digite..." />
+        <datalist id="listaOperadores">
+          <option value="2552MATHEUS">
+          <option value="2552MARCUS">
+        </datalist>
+        <div class="error-message" id="erro-operador">Por favor, selecione um operador válido.</div>
+
+
+      <label for="cliente" class="required">Cliente</label>
+      <input type="text" id="cliente" name="cliente" required />
+      <div class="error-message" id="erro-cliente">Campo obrigatório</div>
+
+      <label for="cpf" class="required">CPF do Cliente</label>
+      <input type="text" id="cpf" name="cpf" required />
+      <div class="error-message" id="erro-cpf">Campo obrigatório</div>
+
+      <label for="contrato" class="required">Contrato</label>
+      <input type="text" id="contrato" name="contrato" required />
+      <div class="error-message" id="erro-contrato">Campo obrigatório</div>
+
+      <label for="parcela" class="required">Parcela (ex: 2/5)</label>
+      <input type="text" id="parcela" name="parcela" required />
+      <div class="error-message" id="erro-parcela">Campo obrigatório</div>
+
+      <label for="vencimento" class="required">Vencimento Original da Parcela</label>
+      <input type="date" id="vencimento" name="vencimento" required />
+      <div class="error-message" id="erro-vencimento">Campo obrigatório</div>
+
+      <label for="vencimento_boleto">Vencimento do Boleto</label>
+      <input type="date" id="vencimento_boleto" name="vencimento_boleto" />
+      <div class="error-message" id="erro-vencimento_boleto">Insira uma data válida</div>
+
+
+      <label for="data_pagamento">Data de Pagamento</label>
+      <input type="date" id="data_pagamento" name="data_pagamento" />
+      <div class="error-message" id="erro-data_pagamento">Insira uma data válida</div>
+
+     <label for="evento" class="required">Evento</label>
+<input type="text" id="evento" name="evento" required autocomplete="off" placeholder="Digite para buscar..." list="listaEventos">
+<datalist id="listaEventos">
+  <option value="Ligação completada">
+  <option value="Ligação caiu">
+  <option value="Caixa postal">
+  <option value="Cliente não atendeu">
+  <option value="Número fora de serviço">
+  <option value="Número inválido">
+  <option value="Telefone mudo">
+  <option value="Telefone ocupado">
+  <option value="Encaminhou para WhatsApp">
+  <option value="Transferido para outro setor">
+  <option value="Cliente não localizado">
+  <option value="Cliente mudou de número">
+  <option value="Cliente mudou de endereço">
+  <option value="Cliente faleceu">
+  <option value="Cliente se recusa a pagar">
+  <option value="Cliente sem condições no momento">
+  <option value="Acordo realizado por telefone">
+  <option value="Acordo realizado por WhatsApp">
+  <option value="Promessa de pagamento">
+  <option value="Pagamento agendado">
+  <option value="Pagamento efetuado ">
+  <option value="Proposta no WhatsApp">
+  <option value="Solicitou boleto por e-mail">
+  <option value="Solicitou boleto por WhatsApp">
+  <option value="Solicitou segunda via">
+  <option value="Solicitou retorno em outro horário">
+  <option value="Sem whatsapp">
+  <option value="Dívida quitada">
+  <option value="Encaminhado para jurídico">
+  <option value="Parcelamento efetuado">
+  <option value="Reencaminhado para cobrança">
+  <option value="Registro apenas informativo">
+  <option value="Envio de WhatsApp">
+  <option value="Receptivo de WhatsApp">
+</datalist>
+<div class="error-message" id="erro-evento">Por favor, escolha um evento válido da lista.</div>
+
+<label for="telefone">Telefone</label>
+<input type="text" id="telefone" name="telefone" placeholder="11 - 9999-9999" pattern="\d{2}\s*-\s*\d{4,5}-\d{4}" />
+
+
+
+<label for="canal" class="required">Canal (WhatsApp, ligação...)</label>
+<input type="text" id="canal" name="canal" required />
+<div class="error-message" id="erro-canal">Campo obrigatório</div>
+
+<label for="status" class="required">Status</label>
+<select id="status" name="status" required>
+  <option value="">-- Selecione o Status --</option>
+  <option>Com Acordo</option>
+  <option>Pago</option>
+  <option>Em atraso</option>
+  <option>Em dia</option>
+</select>
+<div class="error-message" id="erro-status">Campo obrigatório</div>
+
+<label for="observacoes">Observações</label>
+<textarea id="observacoes" name="observacoes"></textarea>
+
+      <button class="btn-submit" type="submit">Registrar Evento</button>
+
+      <div id="mensagem-sucesso" class="sucesso-msg">Registro realizado com sucesso!</div>
+    </form>
+  </div>
+
+  <script>
+  // Função para selecionar empresa, alterar logo e botão, e salvar no localStorage
+  function selecionarEmpresa(empresa) {
+    const logo = document.getElementById('empresaLogo');
+    const btnRio = document.getElementById('btnRio');
+    const btnZip = document.getElementById('btnZipdin');
+    const hiddenInput = document.getElementById('empresa');
+
+    if (empresa === 'rio') {
+      logo.src = 'https://i.ibb.co/xtV8GcBV/logoriocred-removebg-preview.png';
+      btnRio.classList.add('selected');
+      btnZip.classList.remove('selected');
+      hiddenInput.value = 'rio';
+    } else {
+      logo.src = 'https://i.ibb.co/Zpbsv98f/logo.png';
+      btnZip.classList.add('selected');
+      btnRio.classList.remove('selected');
+      hiddenInput.value = 'zipdin';
+    }
+
+    localStorage.setItem('empresaSelecionada', empresa);
+  }
+
+  // Função para validar datas no formato yyyy-MM-dd
+  function isDataValida(dataStr) {
+    if (!dataStr) return false;
+
+    const data = new Date(dataStr);
+    if (!(data instanceof Date) || isNaN(data)) return false;
+
+    const ano = data.getFullYear();
+    if (ano < 1900 || ano > 2100) return false;
+
+    const regex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!regex.test(dataStr)) return false;
+
+    return true;
+  }
+
+  // Função chamada ao enviar o formulário
+  function enviarEvento() {
+    const form = document.getElementById('formEvento');
+    document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+
+    let camposObrigatorios = [
+      'operador', 'cliente', 'cpf', 'contrato', 'parcela',
+      'vencimento', 'evento', 'canal', 'status'
+    ];
+
+    let valido = true;
+
+    // Validação campos obrigatórios
+    camposObrigatorios.forEach(campo => {
+      let el = document.getElementById(campo);
+      if (!el.value || el.value.trim() === "") {
+        document.getElementById('erro-' + campo).style.display = 'block';
+        valido = false;
+      }
+    });
+
+    // Validação operador (só aceita os da lista)
+    const operadorInput = document.getElementById('operador');
+    const operadoresPermitidos = ["2552MATHEUS", "2552MARCUS"];
+    if (!operadoresPermitidos.includes(operadorInput.value.trim())) {
+      document.getElementById('erro-operador').style.display = 'block';
+      valido = false;
+    }
+
+    // Validação evento (só aceita valor da lista)
+    const eventoInput = document.getElementById('evento');
+    const eventoLista = Array.from(document.querySelectorAll('#listaEventos option')).map(opt => opt.value);
+    if (!eventoLista.includes(eventoInput.value.trim())) {
+      document.getElementById('erro-evento').style.display = 'block';
+      valido = false;
+    }
+
+    // Validação vencimento (obrigatório)
+    const vencimento = document.getElementById('vencimento').value;
+    if (!isDataValida(vencimento)) {
+      const erro = document.getElementById('erro-vencimento');
+      erro.textContent = "Insira uma data válida";
+      erro.style.display = 'block';
+      valido = false;
+    }
+
+    // Validação vencimento boleto (opcional)
+    const vencimentoBoleto = document.getElementById('vencimento_boleto').value;
+    if (vencimentoBoleto && !isDataValida(vencimentoBoleto)) {
+      const erro = document.getElementById('erro-vencimento_boleto');
+      erro.textContent = "Insira uma data válida";
+      erro.style.display = 'block';
+      valido = false;
+    }
+
+    // Validação data pagamento (opcional)
+    const dataPagamento = document.getElementById('data_pagamento').value;
+    if (dataPagamento && !isDataValida(dataPagamento)) {
+      const erro = document.getElementById('erro-data_pagamento');
+      erro.textContent = "Insira uma data válida";
+      erro.style.display = 'block';
+      valido = false;
+    }
+
+    if (!valido) {
+      return false;
+    }
+
+    let dados = {};
+    new FormData(form).forEach((v, k) => { dados[k] = v; });
+
+    if (!dados['data_pagamento']) {
+      dados['data_pagamento'] = 'Sem Pgto';
+    }
+
+    google.script.run
+      .withSuccessHandler(msg => {
+        form.reset();
+
+        // Depois do reset, restaurar a seleção da empresa
+        const empresaSalva = localStorage.getItem('empresaSelecionada') || 'rio';
+        selecionarEmpresa(empresaSalva);
+
+        const msgEl = document.getElementById('mensagem-sucesso');
+        msgEl.textContent = msg;
+        msgEl.style.display = 'block';
+        setTimeout(() => {
+          msgEl.style.display = 'none';
+        }, 5000);
+      })
+      .withFailureHandler(err => {
+        alert('Erro ao salvar: ' + err.message);
+      })
+      .SalvarEvento(dados);
+
+    return false;
+  }
+
+  // Executa ao carregar a página para restaurar a empresa selecionada
+  window.onload = function() {
+    const empresaSalva = localStorage.getItem('empresaSelecionada');
+    if (empresaSalva) {
+      selecionarEmpresa(empresaSalva);
+    } else {
+      selecionarEmpresa('rio'); // padrão se nada salvo
+    }
+  }
+</script>
